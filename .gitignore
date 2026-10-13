@@ -1,0 +1,20 @@
+# Local installation state and credentials must never be committed.
+/config.php
+/.env
+/.env.*
+!/config.example.php
+/data/
+/private/
+/backups/
+/logs/
+/vendor/
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+*service-account*.json
+__pycache__/
+.DS_Store
+/dist/*.tmp
