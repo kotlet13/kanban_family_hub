@@ -1,6 +1,6 @@
 # FamilyHub for Jivie
 
-FamilyHub **0.13.0 / schema 17** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
+FamilyHub **0.14.0 / schema 18** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
 
 The plugin supports households, organizations and project-only collaboration,
 tasks/events/shopping, separate financial records, private idea-board images,
@@ -8,15 +8,15 @@ notifications and reports to the administrator of the selected server.
 
 ## Download and install
 
-Use the [versioned FamilyHub0.13.0 installation ZIP](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.13.0/dist/FamilyHub-0.13.0.zip)
-and its [SHA256](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.13.0/dist/FamilyHub-0.13.0.zip.sha256).
+Use the [versioned FamilyHub0.14.0 installation ZIP](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.0/dist/FamilyHub-0.14.0.zip)
+and its [SHA256](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.0/dist/FamilyHub-0.14.0.zip.sha256).
 Extract the contained **FamilyHub** directory into your Kanboard `plugins/`
 directory. Do not copy the repository's `.git`, tooling or local configuration
 into an HTTP document root. See the installation, configuration and backup
 instructions below. Installation performs database migrations; rehearse on a
 separate installation with a verified database/files/configuration backup.
 
-The public PHP source is identical to the reviewed0.13.0 source distribution;
+The public PHP source is identical to the reviewed0.14.0 source distribution;
 the public README, license notices and packaging tools are maintained here.
 
 ## License and paid hosting
@@ -32,6 +32,31 @@ Kanboard is a separate MIT-licensed dependency; its code and vendor libraries
 are not bundled in this repository. Retain their own notices when distributing
 them. See [dependency notices](NOTICE.md). The hosting service's operation and
 configuration are separate from this plugin's source license.
+
+## Scope lifecycle, deadline reminders and notification topics
+
+Version0.14.0 adds reviewed closed-content deletion for spaces and individual
+projects, descendant membership revocation, and inherited archive guards.
+Deleting a space does not delete members' accounts or their server sign-in.
+Deleted scopes remain tombstones; retry receipts prevent duplicate deletion.
+Photo cleanup is retried after the database transaction. Cross-scope financial
+links block deletion until resolved instead of damaging another space.
+
+Task reminders can follow the current deadline; completed or deleted tasks
+cancel pending reminders. The server sends a useful bounded notification topic
+only after checking the recipient's current access. New Android clients
+negotiate grouped data-message display; older clients and iOS retain operating-
+system alerts. Versioned sync6 supports extended Idea text/archive state and
+pictured gardens with physical scale, spacing and harvest history. Existing
+queued operations keep their original request identities and formats; clients
+must upgrade before accessing scopes that contain newer records.
+
+Schema18 is additive. Back up and rehearse restoration of every database table,
+the entire private data tree, configuration, SMTP/FCM keys and worker setup before
+upgrading. Existing keys and registrations must be preserved. See the
+[lifecycle API contract](docs/scope-lifecycle-api-contract.md) and
+[change log](CHANGELOG.md). This public source package does not establish a
+hosted migration or a physical device test.
 
 ## Editable idea boards
 

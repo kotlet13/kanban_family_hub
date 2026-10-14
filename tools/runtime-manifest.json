@@ -1,5 +1,6 @@
 [
   "Api/IdentityMiddleware.php",
+  "CHANGELOG.md",
   "Controller/AccountDeletionController.php",
   "Controller/EnrollmentController.php",
   "Controller/InvitationController.php",
@@ -47,11 +48,13 @@
   "Model/NativePersonalService.php",
   "Model/NativeProjectSharingService.php",
   "Model/NativePushCrypto.php",
+  "Model/NativePushPresentation.php",
   "Model/NativePushQueue.php",
   "Model/NativePushService.php",
   "Model/NativePushWorker.php",
   "Model/NativeRecordPolicy.php",
   "Model/NativeReminderService.php",
+  "Model/NativeScopeLifecycleService.php",
   "Model/NativeScopeService.php",
   "Model/NativeService.php",
   "Model/NativeSmtpTransport.php",
@@ -67,6 +70,7 @@
   "Schema/CollaborationSchema.php",
   "Schema/EmailInvitationSchema.php",
   "Schema/IdeasSchema.php",
+  "Schema/LifecycleSchema.php",
   "Schema/LinkedPaymentsSchema.php",
   "Schema/ModerationSchema.php",
   "Schema/Mysql.php",
@@ -94,6 +98,7 @@
   "docs/ideas-api-contract.md",
   "docs/linked-payments-api-contract.md",
   "docs/moderation-api-contract.md",
+  "docs/scope-lifecycle-api-contract.md",
   "docs/space-sharing-api-contract.md",
   "docs/spaces-api-contract.md"
 ]
