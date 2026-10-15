@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.1 — 2026-10-15
+
+- Default notification sound to on in every category when no preference is stored or a partial stored preference omits `sound`.
+- Preserve every stored `sound: false` and `sound: true`, including values materialized by older versions. Do not migrate, backfill, clear or rewrite existing settings.
+- Resolve the current category sound preference immediately before push delivery, including Android display2 and operating-system notification payloads.
+- Retain schema18, worker setup, request identities, keys and registrations. Do not replay notification history or opt devices in automatically.
+
 ## 0.14.0 — 2026-10-14
 
 - Add reviewed whole-space and project deletion with counted previews, durable tombstones, idempotent retries and post-commit private-image cleanup. Preserve accounts, devices, parents and unrelated financial facts; reject deletion graphs with external dependencies.

@@ -46,7 +46,7 @@ def collect():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'dist/FamilyHub-0.14.0.zip')
+    parser.add_argument('--output',type=Path,default=ROOT/'dist/FamilyHub-0.14.1.zip')
     args = parser.parse_args()
     entries = collect()
     destination = args.output.absolute()
@@ -55,7 +55,7 @@ def main():
     destination.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(destination,'x',zipfile.ZIP_DEFLATED) as z:
         for name,data in sorted(entries.items()):
-            info=zipfile.ZipInfo('FamilyHub/'+name,(2026,10,14,0,0,0))
+            info=zipfile.ZipInfo('FamilyHub/'+name,(2026,10,15,0,0,0))
             info.compress_type=zipfile.ZIP_DEFLATED
             info.external_attr=0o100644<<16
             z.writestr(info,data)

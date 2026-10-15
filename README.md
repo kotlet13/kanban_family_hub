@@ -1,22 +1,40 @@
 # FamilyHub for Jivie
 
-FamilyHub **0.14.0 / schema 18** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
+FamilyHub **0.14.1 / schema 18** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
 
 The plugin supports households, organizations and project-only collaboration,
 tasks/events/shopping, separate financial records, private idea-board images,
 notifications and reports to the administrator of the selected server.
 
+## 0.14.1: sound on for new or unspecified notification settings
+
+All notification categories now default to sound on when there is no stored
+category preference or the stored category has no `sound` field. Every stored
+`sound: false` or `sound: true` remains unchanged, including values materialized
+by an older version. There is no settings migration, backfill, cache reset or
+rewrite of existing preferences. The sender reads the current preference before
+delivery. In-app/push defaults stay on and email stays off; device registration,
+OS permission, channel settings and silent mode remain separate.
+
+This patch keeps schema18, existing worker setup, keys and registrations.
+It does not replay notification history or register devices automatically.
+The repository also includes the updated
+[notification and collaboration contract](https://github.com/kotlet13/kanban_family_hub/blob/v0.14.1/docs/collaboration-api-contract.md)
+and [push contract](https://github.com/kotlet13/kanban_family_hub/blob/v0.14.1/docs/push-api-contract.md).
+These two additional references are repository documentation; the installation
+ZIP retains the same reviewed runtime path allowlist as0.14.0.
+
 ## Download and install
 
-Use the [versioned FamilyHub0.14.0 installation ZIP](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.0/dist/FamilyHub-0.14.0.zip)
-and its [SHA256](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.0/dist/FamilyHub-0.14.0.zip.sha256).
+Use the [versioned FamilyHub0.14.1 installation ZIP](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.1/dist/FamilyHub-0.14.1.zip)
+and its [SHA256](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.1/dist/FamilyHub-0.14.1.zip.sha256).
 Extract the contained **FamilyHub** directory into your Kanboard `plugins/`
 directory. Do not copy the repository's `.git`, tooling or local configuration
 into an HTTP document root. See the installation, configuration and backup
 instructions below. Installation performs database migrations; rehearse on a
 separate installation with a verified database/files/configuration backup.
 
-The public PHP source is identical to the reviewed0.14.0 source distribution;
+The public PHP source is identical to the reviewed0.14.1 source distribution;
 the public README, license notices and packaging tools are maintained here.
 
 ## License and paid hosting
@@ -66,7 +84,7 @@ Version0.13.0 adds local-first editable boards with text, photos, drawing and im
 
 Version 0.12.0 adds shared-content policy acceptance and reports to the administrator of this server. Reports and their evidence stay on this installation; they are not sent to TriparNA. Only authorized shared content or visible members can be reported. Reporting does not automatically remove content or membership, and is available without accepting the shared-content policy. Local use and personal private synchronization remain separate. See [the moderation contract](docs/moderation-api-contract.md) for operations, access checks, administrator handling and retention.
 
-Read inbox notifications retain the existing seven-day period from the first read; marking unread cancels retention. Cleanup uses the existing reminders cron and visibility revision. Missing category preferences enable in-app and push notifications while email and sound remain disabled. Explicit saved preferences retain priority. Device registration and operating-system permission are still separate; the update does not register devices or deliver historic notifications.
+Read inbox notifications retain the existing seven-day period from the first read; marking unread cancels retention. Cleanup uses the existing reminders cron and visibility revision. Missing category preferences enable in-app, push and sound notifications while email remains disabled. A missing `sound` field also defaults to true. Every explicitly stored true or false retains priority; existing preference rows are not migrated or rewritten. Device registration and operating-system permission are still separate; the update does not register devices or deliver historic notifications.
 
 ## Whole-space and project-only sharing
 
