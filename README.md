@@ -1,90 +1,34 @@
-# FamilyHub for Jivie
+# FamilyHub 0.15.0 for Jivie
 
-FamilyHub **0.14.1 / schema 18** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
+FamilyHub **0.15.0 / schema 19** is a Kanboard plugin for optional self-hosted accounts, private synchronization and shared household/project spaces in Jivie. Jivie's personal local use does not require this server. Managed hosting is not included. This repository contains plugin source only, with a fresh publication history; it does not contain the mobile application's history or production configuration/data.
 
-The plugin supports households, organizations and project-only collaboration,
-tasks/events/shopping, separate financial records, private idea-board images,
-notifications and reports to the administrator of the selected server.
+## Organization tables and private documents
 
-## 0.14.1: sound on for new or unspecified notification settings
+Version0.15.0 adds organization tables with raw text, numbers/formulas, whole-document revision checks and an exclusive90-second renewable device lease. The server stores raw formulas without evaluating code or fetching URLs. Other authorized members can view while one device edits. Private attachments belong to the exact shared scope, task or organization table; each authenticated upload/download rechecks current access. Limits are20MiB/file and256MiB/scope. Supported formats are PDF, DOC/DOCX, ODT, XLS/XLSX, ODS, TXT, CSV, RTF and JPEG/PNG; ZIP office formats require PHP ZipArchive. Files are never publicly linked, executed or rendered by FamilyHub. See [DOCUMENTS_API.md](DOCUMENTS_API.md) for exact limits, operations, moderation, cleanup and retention.
 
-All notification categories now default to sound on when there is no stored
-category preference or the stored category has no `sound` field. Every stored
-`sound: false` or `sound: true` remains unchanged, including values materialized
-by an older version. There is no settings migration, backfill, cache reset or
-rewrite of existing preferences. The sender reads the current preference before
-delivery. In-app/push defaults stay on and email stays off; device registration,
-OS permission, channel settings and silent mode remain separate.
+Schema19 adds five tables without rewriting existing users, content, preferences, sessions or keys. Capabilities `spreadsheets` and `attachments` remain false until the complete schema exists. Retain the existing reminders cron: it also retries document cleanup and removes expired unfinished uploads/orphan files in bounded batches. Back up **all database tables, every file below private DATA_DIR, configuration, encryption keys, matching source and cron**, and verify a complete isolated restore before upgrade. Protect the private data tree outside public document roots; attachment directories/files use0700/0600. Source packaging is separate from a hosted migration.
 
-This patch keeps schema18, existing worker setup, keys and registrations.
-It does not replay notification history or register devices automatically.
-The repository also includes the updated
-[notification and collaboration contract](https://github.com/kotlet13/kanban_family_hub/blob/v0.14.1/docs/collaboration-api-contract.md)
-and [push contract](https://github.com/kotlet13/kanban_family_hub/blob/v0.14.1/docs/push-api-contract.md).
-These two additional references are repository documentation; the installation
-ZIP retains the same reviewed runtime path allowlist as0.14.0.
+## Explicit username or email invitations
 
-## Download and install
+Version0.15.0 extends invitation3 with a recipient email or exact existing active username. Username invitations bind the durable Native account, disclose no email, require a separate explicit acceptance and appear in that account's pending invitations, even without SMTP. They never register or automatically join an account. New recipients still use the email flow. Clients must check `usernameInvitations` and `invitationResend` capabilities; older servers do not gain these features by changing labels. Atomic resend creates a new ID/token/expiry, invalidates the previous link and cancels its unfinished mail job in the same transaction. Retries reuse the same request identity/body. See [the sharing contract](docs/space-sharing-api-contract.md).
 
-Use the [versioned FamilyHub0.14.1 installation ZIP](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.1/dist/FamilyHub-0.14.1.zip)
-and its [SHA256](https://github.com/kotlet13/kanban_family_hub/raw/refs/tags/v0.14.1/dist/FamilyHub-0.14.1.zip.sha256).
-Extract the contained **FamilyHub** directory into your Kanboard `plugins/`
-directory. Do not copy the repository's `.git`, tooling or local configuration
-into an HTTP document root. See the installation, configuration and backup
-instructions below. Installation performs database migrations; rehearse on a
-separate installation with a verified database/files/configuration backup.
+Invitation mail gives the exact expiry date/time with UTC timezone and accurate policy-specific rights. Its SL/EN landing offers the existing Android install link, clear return-to-original-email guidance after installation and an app-open action. It does not promise automatic invitation transfer through the store; iPhone/iPad public availability remains pending. Registration and login alone never accept modern invitations. The release also fixes record3 household-person archive validation while preserving record6 project archive checks and protects account-bound invitations when an old username is reused.
 
-The public PHP source is identical to the reviewed0.14.1 source distribution;
-the public README, license notices and packaging tools are maintained here.
+## Space lifecycle and notifications
 
-## License and paid hosting
+Version0.14.0 adds counted, owner-reviewed whole-space deletion and editor-authorized inline project deletion. Closed content graphs are removed with durable tombstones and retry-safe request identities; unrelated scopes, accounts and devices remain. External financial dependencies and separately owned descendants block deletion. Private image unlink runs after commit through a durable cleanup queue. Archive pauses descendant writes, invitations and delivery while retaining history. Normal member removal also revokes descendant direct access, with child-ownership safeguards. See [the lifecycle contract](docs/scope-lifecycle-api-contract.md).
 
-[MIT](LICENSE), copyright TriparNA. Commercial use, paid hosting, installation,
-support, modification and redistribution are permitted under the MIT terms.
-Redistributed copies or substantial portions must retain the copyright and
-permission notice. Other providers have the same permissions; this license
-does not reserve hosting exclusively to TriparNA or require publication of
-private modifications. Trademarks and logos are not granted by the code license.
-
-Kanboard is a separate MIT-licensed dependency; its code and vendor libraries
-are not bundled in this repository. Retain their own notices when distributing
-them. See [dependency notices](NOTICE.md). The hosting service's operation and
-configuration are separate from this plugin's source license.
-
-## Scope lifecycle, deadline reminders and notification topics
-
-Version0.14.0 adds reviewed closed-content deletion for spaces and individual
-projects, descendant membership revocation, and inherited archive guards.
-Deleting a space does not delete members' accounts or their server sign-in.
-Deleted scopes remain tombstones; retry receipts prevent duplicate deletion.
-Photo cleanup is retried after the database transaction. Cross-scope financial
-links block deletion until resolved instead of damaging another space.
-
-Task reminders can follow the current deadline; completed or deleted tasks
-cancel pending reminders. The server sends a useful bounded notification topic
-only after checking the recipient's current access. New Android clients
-negotiate grouped data-message display; older clients and iOS retain operating-
-system alerts. Versioned sync6 supports extended Idea text/archive state and
-pictured gardens with physical scale, spacing and harvest history. Existing
-queued operations keep their original request identities and formats; clients
-must upgrade before accessing scopes that contain newer records.
-
-Schema18 is additive. Back up and rehearse restoration of every database table,
-the entire private data tree, configuration, SMTP/FCM keys and worker setup before
-upgrading. Existing keys and registrations must be preserved. See the
-[lifecycle API contract](docs/scope-lifecycle-api-contract.md) and
-[change log](CHANGELOG.md). This public source package does not establish a
-hosted migration or a physical device test.
+Schema18 also adds task-relative reminder scheduling and negotiated push display format2. New Android clients render grouped topic notifications from data-only delivery; legacy Android and iOS retain operating-system alerts. Shopping notifications resolve their authorized parent list. Existing registrations remain format1 until explicitly upgraded. Sync6/record6 supports archived projects, idea-board format2 and garden-scene format3 without rewriting old queued bodies. Back up all database tables, the entire private data tree and configuration, then rehearse restoration before upgrading. See [the changelog](CHANGELOG.md).
 
 ## Editable idea boards
 
-Version0.13.0 adds local-first editable boards with text, photos, drawing and image-attached annotations, plus authorized household/organization/project sharing. `sync5` adds the idea record without rewriting old operations. Image transfers are authenticated, bounded and private, with verified hashes and no public attachment URLs. Explicit board saves produce the `ideas` notification category; image chunks do not notify. Reports retain the complete board and private photos for administrator review. GD PNG/JPEG support is required; missing support is advertised and rejects new writes while older content remains usable. Back up all schema17 tables and the entire private `DATA_DIR/familyhub/ideas` tree. See [the idea-board contract](docs/ideas-api-contract.md). Source preparation does not establish a hosted upgrade.
+Version0.13.0 introduced local-first editable boards with text, photos, drawing and image-attached annotations, plus authorized household/organization/project sharing. `sync5` adds the idea record without rewriting old operations. Image transfers are authenticated, bounded and private, with verified hashes and no public attachment URLs. Explicit board saves produce the `ideas` notification category; image chunks do not notify. Reports retain the complete board and private photos for administrator review. GD PNG/JPEG support is required; missing support is advertised and rejects new writes while older content remains usable. Back up all database tables and the entire private `DATA_DIR`, including `familyhub/ideas` and `familyhub/attachments`. See [the idea-board contract](docs/ideas-api-contract.md). Source preparation does not establish a hosted upgrade.
 
-## Shared-content rules and notification defaults
+## Notification defaults
 
 Version 0.12.0 adds shared-content policy acceptance and reports to the administrator of this server. Reports and their evidence stay on this installation; they are not sent to TriparNA. Only authorized shared content or visible members can be reported. Reporting does not automatically remove content or membership, and is available without accepting the shared-content policy. Local use and personal private synchronization remain separate. See [the moderation contract](docs/moderation-api-contract.md) for operations, access checks, administrator handling and retention.
 
-Read inbox notifications retain the existing seven-day period from the first read; marking unread cancels retention. Cleanup uses the existing reminders cron and visibility revision. Missing category preferences enable in-app, push and sound notifications while email remains disabled. A missing `sound` field also defaults to true. Every explicitly stored true or false retains priority; existing preference rows are not migrated or rewritten. Device registration and operating-system permission are still separate; the update does not register devices or deliver historic notifications.
+Read inbox notifications retain the existing seven-day period from the first read; marking unread cancels retention. Cleanup uses the existing reminders cron and visibility revision. Missing category preferences enable in-app, push and sound for every category, including reminders and Ideas; email remains disabled. A missing sound field in an older partial preference inherits sound-on. Every explicitly saved false or true remains unchanged. This default change performs no migration, backfill or rewrite of existing settings; reading preferences or delivering an event never materializes default preference rows. Workers reread the current saved choice before delivery. Device registration and operating-system permission are still separate; the update does not register devices or deliver historic notifications.
 
 ## Whole-space and project-only sharing
 
@@ -96,7 +40,7 @@ New scopes explicitly request policy 3. Existing policies 1/2 require an owner-r
 
 Version 0.10.0 adds invitations addressed to a verified email identity. The owner enters an email and role; the encrypted account-mail worker sends an expiring invitation link. New recipients choose their own username and password, existing users sign in, and both explicitly accept the invitation before obtaining membership. Registration itself grants no access to the invited space. The sender never receives the registration token or an account-existence result. Legacy username invitations remain available through the original contract. See [docs/email-invitation-api-contract.md](docs/email-invitation-api-contract.md) for compatibility, limits and identity checks.
 
-Email invitations require the existing account-mail encryption key and SMTP configuration, plus an administrator-configured HTTPS Kanboard application URL (or `FAMILYHUB_PUBLIC_URL`). Do not derive this address from an untrusted request header. The existing `cli/account-mail.php` worker also processes invitation messages; no additional cron is necessary. Enqueueing and SMTP acceptance do not prove delivery to the recipient's inbox. Links open a read-only landing page with an app link and code-copy fallback; opening a link never accepts membership.
+Email invitations require the existing account-mail encryption key and SMTP configuration, plus an administrator-configured HTTPS Kanboard application URL (or `FAMILYHUB_PUBLIC_URL`). Do not derive this address from an untrusted request header. The existing `cli/account-mail.php` worker also processes invitation messages; no additional cron is necessary. Enqueueing and SMTP acceptance do not prove delivery to the recipient's inbox. Links open a read-only SL/EN landing page with an app-open action, Android install guidance and link/code-copy fallback; opening a link never accepts membership.
 
 ## Spaces policy and gardens
 

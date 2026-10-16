@@ -17,12 +17,13 @@ class NativeModerationService extends NativeDatabase
     {
         $parts=explode('.',$operation);$group=$parts[0];$action=$parts[1]??'';
         $mutating=($group==='scopes' && in_array($action,['create','updateMetadata','setLeader','accessMigrationApply','projectSharingApply'],true)) ||
-            (in_array($group,['invitations','invitations2','invitations3'],true) && $action==='create') ||
+            (in_array($group,['invitations','invitations2','invitations3'],true) && in_array($action,['create','resend'],true)) ||
             (in_array($group,['sync','sync2','sync3','sync4','sync5','sync6'],true) && in_array($action,['push','pushTaskWithCost'],true)) ||
             (in_array($group,['finance','finance2'],true) && in_array($action,['push','enable','grant'],true)) ||
             ($group==='finance3' && in_array($action,['paymentCommit','paymentReimburse'],true)) ||
             ($group==='reminders' && in_array($action,['put'],true));
         if ($group==='ideas' && $action==='asset' && in_array($parts[2]??'', ['begin','chunk','complete'],true)) { $mutating=true; }
+        if (($group==='tables' && in_array($action,['create','save'],true)) || ($group==='attachments' && in_array($action,['begin','chunk','complete'],true))) { $mutating=true; }
         if (!$mutating) { return; }
         $user=$this->actor(false)['user'];
         if (isset($params['scopeId'])) {
@@ -79,9 +80,11 @@ class NativeModerationService extends NativeDatabase
     private function preview($params,$user)
     {
         $scopeId=$this->uuid($params['scopeId']);$target=$this->uuid($params['targetId']);$kind=$params['targetType'];
-        if (!in_array($kind,['record','finance','user'],true)) { throw new NativeError('validation_error'); }
+        if (!in_array($kind,['record','finance','user','table','attachment'],true)) { throw new NativeError('validation_error'); }
         $scope=$this->scope($scopeId,$user['id']);if ($scope['kind']==='personal') { throw new NativeError('personal_not_shareable',403); }
-        if ($kind==='user') {
+        if (in_array($kind,['table','attachment'],true)) {
+            $service=$kind==='table'?new NativeTableService($this->container):new NativeAttachmentService($this->container);$evidence=$service->moderationEvidence($scope,$target);$title=$evidence['title'];$type=$kind;$revision=$evidence['revision'];
+        } elseif ($kind==='user') {
             $member=null;foreach ((new NativeOrganizationAccess($this->container))->members($scopeId) as $candidate) { if ($candidate['accountId']===$target) { $member=$candidate;break; } }
             if (!$member) { throw new NativeError('report_target_unavailable',404); }
             $evidence=['accountId'=>$target,'displayName'=>mb_strcut($member['displayName'],0,200,'UTF-8'),'username'=>mb_strcut($member['username'],0,64,'UTF-8'),'role'=>$member['role']];$title=$member['displayName'];$type='user';$revision=(int)$scope['effective_access_revision'];

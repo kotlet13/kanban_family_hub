@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.15.0 - 2026-10-16
+
+- Add organization tables with bounded raw cells/formulas, expected revisions, exclusive renewable device leases and explicit client saves. Add schema19's five document/attachment/request/cleanup tables without changing existing records or preferences.
+- Add authenticated private scope/task/table attachments, bounded chunk transfers, size/hash/type validation, private storage, report evidence and durable lifecycle/account cleanup. Backups must include every database table and the entire private DATA_DIR, configuration, encryption keys and cron. PHP ZipArchive is required for ZIP office formats; GD remains required for idea photos.
+- Extend policy3 invitations with exact existing Native usernames alongside email, durable recipient identity and separate authenticated acceptance. Atomic resend replaces the old invitation and pending encrypted delivery together; older servers are capability-gated.
+- Simplify SL/EN invitation mail/landing with exact expiry/timezone, accurate access descriptions, Android install and return-to-original-email guidance; public iOS availability remains pending.
+- Fix boolean householdPerson.archived validation without weakening project record6 or other record fields. Prevent username reuse from revoking/deleting another account's durable modern invitation.
+
 ## 0.14.1 — 2026-10-15
 
 - Default notification sound to on in every category when no preference is stored or a partial stored preference omits `sound`.

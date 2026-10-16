@@ -21,7 +21,7 @@ def collect():
         relative = PurePosixPath(name)
         if relative.is_absolute() or '..' in relative.parts or str(relative) != name:
             raise ValueError('Invalid runtime path')
-        if name not in ['Plugin.php', 'LICENSE', 'README.md', 'NOTICE.md', 'CHANGELOG.md'] and not name.startswith(('Api/', 'Controller/', 'Model/', 'Schema/', 'Template/', 'cli/', 'docs/')):
+        if name not in ['Plugin.php', 'LICENSE', 'README.md', 'NOTICE.md', 'CHANGELOG.md', 'DOCUMENTS_API.md'] and not name.startswith(('Api/', 'Controller/', 'Model/', 'Schema/', 'Template/', 'cli/', 'docs/')):
             raise ValueError('Unapproved runtime path')
         path = ROOT / name
         if path.is_symlink() or not stat.S_ISREG(path.stat().st_mode) or path.stat().st_size > 2 * 1024 * 1024:
@@ -46,7 +46,7 @@ def collect():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=ROOT/'dist/FamilyHub-0.14.1.zip')
+    parser.add_argument('--output',type=Path,default=ROOT/'dist/FamilyHub-0.15.0.zip')
     args = parser.parse_args()
     entries = collect()
     destination = args.output.absolute()
@@ -55,7 +55,7 @@ def main():
     destination.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(destination,'x',zipfile.ZIP_DEFLATED) as z:
         for name,data in sorted(entries.items()):
-            info=zipfile.ZipInfo('FamilyHub/'+name,(2026,10,15,0,0,0))
+            info=zipfile.ZipInfo('FamilyHub/'+name,(2026,10,16,0,0,0))
             info.compress_type=zipfile.ZIP_DEFLATED
             info.external_attr=0o100644<<16
             z.writestr(info,data)
